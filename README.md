@@ -13,7 +13,7 @@ Location Tracking: Sends live GPS coordinates via SMS in a Google Maps-compatibl
 
 Alert System: Triggers a buzzer alert when an object is detected within a predefined distance threshold.
 
-Motor Feedback (Optional): Vibration motors can be used for haptic feedback, adjusting intensity based on proximity.
+Motor Feedback : Vibration motors can be used for haptic feedback, adjusting intensity based on proximity.
 
 
 
@@ -21,7 +21,7 @@ Motor Feedback (Optional): Vibration motors can be used for haptic feedback, adj
 
 Hardware Components
 
-Microcontroller (Arduino or ESP8266-compatible)
+Microcontroller (Arduino)
 
 A9G GSM + GPS Module
 
@@ -29,13 +29,13 @@ Ultrasonic Sensors (3x HC-SR04)
 
 Buzzer
 
-Vibration Motors (optional)
+Vibration Motors (3x)
 
-Power Supply (battery or regulated source)
+Power Supply (battery)
 
 Jumper Wires, Breadboard or Custom PCB
 
-Head-mounted wearable (e.g., cap or headband)
+Head-mounted wearable (e.g., cap )
 
 
 
@@ -80,7 +80,7 @@ Working Principle
 
 Ultrasonic sensors measure the distance to nearby obstacles.
 
-If an object is within a critical range, the buzzer is activated and motors (if used) vibrate to alert the wearer.
+If an object is within a critical range, the buzzer is activated and motors vibrate to alert the wearer.
 
 The GPS module collects and parses location data at set intervals.
 
