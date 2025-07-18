@@ -5,7 +5,7 @@ Netra is a wearable assistive technology designed to support visually impaired i
 
 ---
 
-*Features*
+**Features**
 
 Obstacle Detection: Utilizes three ultrasonic sensors to detect nearby objects in multiple directions.
 
@@ -19,7 +19,7 @@ Motor Feedback : Vibration motors can be used for haptic feedback, adjusting int
 
 ---
 
-Hardware Components
+**Hardware Components**
 
 Microcontroller (Arduino)
 
@@ -41,7 +41,7 @@ Head-mounted wearable (e.g., cap )
 
 ---
 
-Pin Configuration
+**Pin Configuration**
 
 Component	Microcontroller Pin
 
@@ -56,7 +56,7 @@ Buzzer	D12
 
 ---
 
-Installation
+**Installation**
 
 1. Clone the repository:
 
@@ -76,7 +76,7 @@ TinyGPSPlus
 
 ---
 
-Working Principle
+**Working Principle**
 
 Ultrasonic sensors measure the distance to nearby obstacles.
 
@@ -90,7 +90,7 @@ Once a set number of valid GPS readings are collected, an SMS containing a Googl
 
 ---
 
-Usage
+**Usage**
 
 Mount the sensors on the cap facing forward, left, and right.
 
@@ -107,7 +107,7 @@ The system will start monitoring the environment and periodically transmit the l
 
 ---
 
-Author
+**Author**
 
 Aviup Bhunia
 Electronics and Communication Engineering Student
