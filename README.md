@@ -5,7 +5,7 @@ Netra is a wearable assistive technology designed to support visually impaired i
 
 ---
 
-Features
+*Features*
 
 Obstacle Detection: Utilizes three ultrasonic sensors to detect nearby objects in multiple directions.
 
