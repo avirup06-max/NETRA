@@ -46,10 +46,15 @@ Head-mounted wearable (e.g., cap )
 Component	Microcontroller Pin
 
 A9G RX / TX	D7 / D6
+
 Ultrasonic Sensor 1	Trig: D2 / Echo: D3
+
 Ultrasonic Sensor 2	Trig: D4 / Echo: D5
+
 Ultrasonic Sensor 3	Trig: D8 / Echo: D13
+
 Motor Outputs	D9, D10, D11
+
 Buzzer	D12
 
 
