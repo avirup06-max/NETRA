@@ -109,6 +109,20 @@ The system will start monitoring the environment and periodically transmit the l
 
 ![WhatsApp Image 2025-07-19 at 01 17 25_e5ca6987](https://github.com/user-attachments/assets/1d93c2ca-d2ce-4e29-99ca-fb324ffe0a67)
 
+---
+
+**Our Model Can Solve the Problem As –**
+Our smart cap effectively addresses the challenges faced by visually impaired individuals through a combination of advanced technologies:
+
+Obstacle Detection: By using ultrasonic sensors to detect obstacles from head to chest level, the cap alerts users to potential hazards, preventing collisions and ensuring safer navigation.
+
+GPS Navigation: Real-time location tracking provides guided directions via message feedback, helping users reach their destinations with ease and confidence.
+
+Alert System: A vibration motor and buzzer work together to warn users of nearby obstacles, allowing them to take timely action and avoid danger.
+
+User-Friendly Design: The cap is lightweight, comfortable, and discreet, making it suitable for daily wear without drawing unwanted attention.
+
+Efficient Power Management: With a Type-C charging system and an eco-friendly solar backup, the device ensures long-lasting performance with minimal maintenance.
 
 ---
 
