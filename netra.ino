@@ -1,24 +1,26 @@
 #include <TinyGPSPlus.h>
-#include <SoftwareSerial.h>
+#include <HardwareSerial.h>
 
-// Pins for the A9G GPS/GSM module
-static const int RXPin = 7, TXPin = 6;
+// UART pins for the A9G GPS/GSM module
+// Using UART1 (Serial1) on ESP32
+static const int RXPin = TXD0;  // GPIO35 as RX
+static const int TXPin = RXD0;  // GPIO34 as TX
 static const uint32_t GPSBaud = 9600;
 
-// Pins for Ultrasonic Sensors and Motors
+// Pins for Ultrasonic Sensors (any GPIO pins)
 const int trigPin1 = 2;
-const int echoPin1 = 3;
-const int motorPin1 = 9;
+const int echoPin1 = 4;
+const int motorPin1 = 14;   // PWM capable
 
-const int trigPin2 = 4;
-const int echoPin2 = 5;
-const int motorPin2 = 10;
+const int trigPin2 = 18;
+const int echoPin2 = 19;
+const int motorPin2 = 15;  // PWM capable
 
-const int trigPin3 = 8;
+const int trigPin3 = 12;
 const int echoPin3 = 13;
-const int motorPin3 = 11;
+const int motorPin3 = 26;  // PWM capable
 
-const int buzzerPin = 12;
+const int buzzerPin = 27;  // PWM capable
 
 // Motor speed settings
 const int speedUnder30 = 255;
@@ -49,14 +51,24 @@ unsigned long previousMillis = 0;
 int data_counter = 0;
 
 TinyGPSPlus gps; // The TinyGPSPlus object
-SoftwareSerial ss(RXPin, TXPin); // The serial connection to the GPS device
+HardwareSerial SerialGPS(1); // Use UART1 for GPS module
+
+// PWM Configuration (ESP32 LEDC)
+const int pwmFrequency = 5000;  // 5 kHz PWM frequency
+const int pwmResolution = 8;    // 8-bit resolution (0-255)
+const int pwmChannel1 = 0;
+const int pwmChannel2 = 1;
+const int pwmChannel3 = 2;
+const int pwmBuzzer = 3;
 
 void setup() {
-  // Start serial communication with the computer
-  Serial.begin(9600);
-  // Start communication with the A9G module
-  ss.begin(GPSBaud); 
-  Serial.println("Starting...");
+  // Start serial communication with the computer (USB)
+  Serial.begin(115200);
+  delay(1000);
+  
+  // Start communication with the A9G module using UART1
+  SerialGPS.begin(GPSBaud, SERIAL_8N1, RXPin, TXPin);
+  Serial.println("Starting ESP32 GPS/GSM with Ultrasonic...");
 
   // Initialize the A9G module
   sendATCommand("AT");
@@ -73,28 +85,36 @@ void setup() {
   // Set SMS mode to text mode
   sendATCommand("AT+CMGF=1");
 
-  // Initialize Ultrasonic Sensors and Motors
+  // Initialize Ultrasonic Sensors pins
   pinMode(trigPin1, OUTPUT);
   pinMode(echoPin1, INPUT);
-  pinMode(motorPin1, OUTPUT);
 
   pinMode(trigPin2, OUTPUT);
   pinMode(echoPin2, INPUT);
-  pinMode(motorPin2, OUTPUT);
 
   pinMode(trigPin3, OUTPUT);
   pinMode(echoPin3, INPUT);
-  pinMode(motorPin3, OUTPUT);
 
   pinMode(buzzerPin, OUTPUT);
 
+  // Configure PWM for motors using LEDC
+  ledcSetup(pwmChannel1, pwmFrequency, pwmResolution);
+  ledcSetup(pwmChannel2, pwmFrequency, pwmResolution);
+  ledcSetup(pwmChannel3, pwmFrequency, pwmResolution);
+  ledcSetup(pwmBuzzer, pwmFrequency, pwmResolution);
+
+  ledcAttachPin(motorPin1, pwmChannel1);
+  ledcAttachPin(motorPin2, pwmChannel2);
+  ledcAttachPin(motorPin3, pwmChannel3);
+  ledcAttachPin(buzzerPin, pwmBuzzer);
+
   // Initialize motors to OFF
-  analogWrite(motorPin1, speedDefault);
-  analogWrite(motorPin2, speedDefault);
-  analogWrite(motorPin3, speedDefault);
+  ledcWrite(pwmChannel1, speedDefault);
+  ledcWrite(pwmChannel2, speedDefault);
+  ledcWrite(pwmChannel3, speedDefault);
 
   // Initialize buzzer to OFF
-  digitalWrite(buzzerPin, LOW);
+  ledcWrite(pwmBuzzer, 0);
 }
 
 void loop() {
@@ -123,18 +143,18 @@ void loop() {
   int speed2 = getMotorSpeed(distance2);
   int speed3 = getMotorSpeed(distance3);
 
-  // Set motor speeds
-  analogWrite(motorPin1, speed1);
-  analogWrite(motorPin2, speed2);
-  analogWrite(motorPin3, speed3);
+  // Set motor speeds using LEDC
+  ledcWrite(pwmChannel1, speed1);
+  ledcWrite(pwmChannel2, speed2);
+  ledcWrite(pwmChannel3, speed3);
 
   // Control buzzer
   if (distance1 > 0 && distance1 <= threshold40 ||
       distance2 > 0 && distance2 <= threshold40 ||
       distance3 > 0 && distance3 <= threshold40) {
-    digitalWrite(buzzerPin, HIGH); // Turn buzzer ON
+    ledcWrite(pwmBuzzer, 255); // Turn buzzer ON
   } else {
-    digitalWrite(buzzerPin, LOW); // Turn buzzer OFF
+    ledcWrite(pwmBuzzer, 0); // Turn buzzer OFF
   }
 
   // Wait for GPS data and check for valid data
@@ -157,18 +177,18 @@ void loop() {
 static void smartDelay(unsigned long ms) {
   unsigned long start = millis();
   do {
-    while (ss.available()) {
-      gps.encode(ss.read());
+    while (SerialGPS.available()) {
+      gps.encode(SerialGPS.read());
     }
   } while (millis() - start < ms);
 }
 
 // Function to send AT command and print response
 void sendATCommand(String command) {
-  ss.println(command);
+  SerialGPS.println(command);
   delay(1000);
-  while (ss.available()) {
-    Serial.write(ss.read());
+  while (SerialGPS.available()) {
+    Serial.write(SerialGPS.read());
   }
 }
 
@@ -204,10 +224,10 @@ void send_gps_data() {
     Serial.println("Sending Message");
     sendATCommand("AT+CMGF=1");
     sendATCommand("AT+CNMI=2,2,0,0,0");
-    ss.print("AT+CMGS=\"+919339858145\"\r"); 
+    SerialGPS.print("AT+CMGS=\"+919339858145\"\r"); 
     delay(1000);
-    ss.print(s);
-    ss.write(0x1A); // Send the SMS
+    SerialGPS.print(s);
+    SerialGPS.write(0x1A); // Send the SMS
     delay(1000);
     
     // Reset the Google Maps URL for the next message
